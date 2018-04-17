@@ -1,0 +1,74 @@
+body {
+  /* devnotes: follow table conventions, example */
+  border:   0;
+  margin:   0;
+  padding:  0;
+}
+
+/* login panel "dialog" (div) */
+.login-panel {
+  background:     #1fa5ff;    /* official colors are, 1fa5ff (blue),
+                               * ffa51f (gold), and ff351f (redish).
+                               */
+  color:          #fff;
+  display:        inline-block;
+  padding:        3em;
+  border-radius:  1em;
+}
+
+/* use the following for both username and password input */
+.login-panel-input {
+  color:    #000;
+}
+
+/* use this for login button (w/ pure-button class) */
+.button-success {
+  color:      #fff;
+  background: #42f45c;
+}
+
+/* use this for reset button (w/ pure-button class) */
+.button-reset {
+  color:      #fff;
+  background: #ed1730;
+}
+
+.button-gold {
+  background: #ffa51f;
+  color: #777;
+}
+
+.registration-form {
+  margin-top:     2em;
+  padding:        2em;
+  color:          #fff;
+  background:     #1fa5ff;
+  border-radius:  1em;
+}
+
+.fieldset-spacing {
+  margin-bottom: 1em;
+}
+
+.fieldset-spacing > label {
+  font-size: 1.2em;
+}
+
+.fieldset-spacing > input[type="text"] {
+  color: #000;
+  width: 100%;
+}
+
+.fieldset-spacing > input[type="password"] {
+  color: #000;
+  width: 100%;
+}
+
+.thin-wrapper {
+  margin-right: 25%;
+  margin-left: 25%;
+}
+
+/*
+vim: number ts=2 sw=2 expandtab tw=76
+*/

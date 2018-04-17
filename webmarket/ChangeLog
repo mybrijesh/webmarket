@@ -1,0 +1,14 @@
+2017-10-22  Rimack Zelnick  <rzelnick@cs.stonybrook.edu>
+	* Added a search panel to the front page
+	* Added a footer to the front page with footer links
+	* Added login page with login form
+
+2017-10-21  Rimack Zelnick  <rzelnick@cs.stonybrook.edu>
+	* Added Slick's carousel jquery plugin
+
+2017-10-20  Rimack Zelnick  <rzelnick@cs.stonybrook.edu>
+	* Created site.css with heading values overridden, font value
+
+2017-10-18  Rimack Zelnick  <rzelnick@cs.stonybrook.edu>
+	* Created initial directory structure
+	* Static website deployment

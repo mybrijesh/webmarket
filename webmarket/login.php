@@ -1,0 +1,140 @@
+<?php
+  if( $_GET && isset( $_GET[ "action" ] ) && strcmp( $_GET[ "action" ], "logout" ) == 0 ) {
+    setcookie( "session_id", "", 0 );
+    header( "location: login.php" );
+  }
+
+  if( $_POST && isset( $_POST[ "submitted" ] ) && !isset( $_COOKIE[ "session_id" ] ) ) {
+    try {
+      $pdo = new PDO( "mysql:host=localhost;dbname=webmarket_database", "root", "password" );
+
+      if( !strcmp( $_POST[ "submitted" ], "true" ) ) {
+        $stmt = $pdo->prepare( "SELECT count(*) FROM user WHERE STRCMP(user_email,:email)=0 AND STRCMP(user_password,:password)=0" );
+        $stmt->execute( [ "email"     => $_POST[ "email" ],
+                          "password"  => $_POST[ "password" ]
+        ] );
+
+        $found = $stmt->fetch( );
+        if( $found[ "count(*)" ] > 0  ) {
+          $stmt = $pdo->prepare( "SELECT user_id FROM user WHERE STRCMP(user_email,:email)=0 AND STRCMP(user_password,:password)=0" );
+          $stmt->execute([  "email"     => $_POST[ "email" ],
+                            "password"  => $_POST[ "password" ] ]);
+          $found = $stmt->fetch( );
+          $uid = $found[ "user_id" ];
+
+          $raw    = $_SERVER[ "HTTP_USER_AGENT" ] . $_SERVER[ "REMOTE_ADDR" ] . $_SERVER[ "REMOTE_PORT" ];
+          $hcode  = hash( "sha256", $raw );
+
+          $seconds = time() + 7200;
+
+          $stmt = $pdo->prepare( "INSERT INTO sessions(session_hash,session_user_id,session_expire) VALUE( :hash, :uid, :seconds )" );
+          $stmt->execute( [ "hash"    => $hcode,
+                            "uid"     => $uid,
+                            "seconds" => $seconds
+          ] );
+
+          setcookie( "session_id", $hcode, time( ) + 7200, "/", "23.94.27.164" );
+          header( "location: index.php" );
+        }
+      }
+    } catch( PDOException $ex ) {
+      echo "PDOException: " . $ex->getMessage( ) . "\n";
+      die( );
+    }
+  }
+?>
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebMarket | Login</title>
+
+<!-- normalize -->
+<link rel="stylesheet"
+href="https://unpkg.com/purecss@1.0.0/build/base-min.css">
+
+<!-- purecss -->
+<link rel="stylesheet"
+href="https://unpkg.com/purecss@1.0.0/build/pure-min.css">
+
+<!-- css responsive grid -->
+<!--[if lte IE 8]>
+<link rel="stylesheet"
+href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-old-ie-min.css"
+>
+<![endif]-->
+<!--[if gt IE 8]><!-->
+<link rel="stylesheet"
+href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
+<!--<![endif]-->
+
+<!-- slick -->
+<link rel="stylesheet" type="text/css"
+href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css"/>
+
+<!-- custom CSS -->
+<link rel="stylesheet" href="/css/site.css">
+<link rel="stylesheet" href="/css/control-panel.css">
+
+<!-- font awesome -->
+<script src="https://use.fontawesome.com/103f400586.js"></script>
+</head><body>
+  <div class="pure-menu pure-menu-horizontal pure-menu-scrollable">
+    <div class="content-wrapper">
+    <a href="/" class="pure-menu-heading pure-menu-link">Web Market&reg;</a>
+    <div style="margin-left:80%;display: inline-block">
+      <ul class="pure-menu-list">
+        <?php
+          if( isset( $_COOKIE[ "session_id" ] ) ) {
+            echo '<li class="pure-menu-item"><a href="myaccount.php" class="pure-menu-link">'
+              .'<i class="fa fa-user"></i> My Account</a></li>'
+              .'<li class="pure-menu-item"><a href="?action=logout" class="pure-menu-link">'
+              .'<i class="fa fa-logout"></i> Logout</a></li>';
+          } else {
+        ?>
+          <li class="pure-menu-item"><a href="login.php" class="pure-menu-link">
+            <i class="fa fa-signin"></i> Login
+          </a></li>
+          <li class="pure-menu-item"><a href="register.php" class="pure-menu-link">
+            <i class="fa fa-signup"></i> Register
+          </a></li>
+        <?php
+          }
+        ?>
+      </ul><!-- /.pure-menu-list -->
+    </div><!-- anonymous -->
+    </div><!-- /.content-wrapper -->
+  </div><!-- /.pure-menu -->
+  <div class="content-wrapper">
+    <h1>Customer login page</h1>
+    <h2><i class="fa fa-lock"></i> This webpage is guaranteed to be
+    protected by an SSL certificate purchased from a trusted provider</h2>
+    <div class="login-panel">
+    <form method="POST" action="" class="pure-form pure-form-stacked">
+    <fieldset>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" style="color:#000" placeholder="Email">
+        <span class="pure-form-message">This is a required field.</span>
+
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" style="color:#000" placeholder="Password">
+
+        <label for="remember" class="pure-checkbox">
+            <input id="remember" type="checkbox"> Remember me
+        </label>
+
+        <button type="submit" class="pure-button button-success">
+          Login
+        </button>
+        <button type="reset" class="pure-button button-reset">
+          Clear Form
+        </button>
+        <input type="hidden" id="submitted" name="submitted" value="true" />
+    </fieldset>
+</form>
+  </div><!-- /.login-panel -->
+  </div><!-- /.content-wrapper -->
+</body></html>
+<!--
+vim: number ts=2 sw=2 expandtab tw=76
+-->

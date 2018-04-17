@@ -1,0 +1,15 @@
+WebMarket is a PHP web application for e-commerce use. It's features include
+user-friendly interface, credit card gateway processing through common gateway
+payments.
+
+Minimal system requirements:
+
+ * Linux OS, Windows Server 2008
+   2 GB of RAM
+   2 CPU cores
+   10 GB of disk size
+
+ * PHP (Version >=5.4)
+   PHP PDO module
+   Mysql Server
+   Mysql Client
